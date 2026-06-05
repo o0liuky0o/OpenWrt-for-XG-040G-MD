@@ -14,7 +14,7 @@ OpenWrt firmware for NOKIA BELL XG-040G-MD
 - **基础界面**: LuCI (支持 HTTPS), 中文语言包
 - **默认主题**: Argon 主题 (含设置页), 保留原生 Bootstrap
 - **网络与安全**: 防火墙 (基于 nftables), dnsmasq (DHCP/DNS/IPv6)
-- **科学上网**: HomeProxy, PassWall (含 xray-core)
+- **科学上网**: HomeProxy, PassWall ，openclash
 
 ## 刷机教程
 
@@ -26,13 +26,6 @@ OpenWrt firmware for NOKIA BELL XG-040G-MD
 > 给路由器通电等 **3秒钟** 后，再按住 reset 键不放。
 > **千万不要**按住 reset 键再通电，否则机器会进入底层的“救砖模式”（MaskROM/Emergency 模式），将无法进入 U-Boot Web 界面。
 
-## 运行截图
-
-### 系统概览
-![System Overview](shot/shot1.png)
-
-### 接口与网络
-![Interfaces](shot/shot2.png)
 
 ## Docs
 
