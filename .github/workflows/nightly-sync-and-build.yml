@@ -6,9 +6,14 @@ permissions:
 
 on:
   workflow_dispatch:
-  schedule:
+  schedule: 
+    # 08:00 Asia/Shanghai = 00:00 UTC
+    - cron: "0 0 1 1,4,7,10 *"
+#on:
+ # workflow_dispatch:
+ # schedule:
     # 03:00 Asia/Shanghai = 19:00 UTC (previous day)
-    - cron: "0 19 * * *"
+   # - cron: "0 19 * * *"
 
 jobs:
   sync-and-dispatch:
