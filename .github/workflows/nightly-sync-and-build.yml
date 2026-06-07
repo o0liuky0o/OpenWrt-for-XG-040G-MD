@@ -57,7 +57,7 @@ jobs:
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
-            /repos/xiangtailiang/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-main.yml/dispatches \
+            /repos/o0liuky0o/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-main.yml/dispatches \
             -f ref='main'
 
       - name: Check upstream openwrt-25.12 branch for new commits
@@ -89,7 +89,7 @@ jobs:
           gh api \
             --method POST \
             -H "Accept: application/vnd.github+json" \
-            /repos/xiangtailiang/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
+            /repos/o0liuky0o/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
             -f ref='main'
 
       - name: Commit updated SHA tracking files
