@@ -6,14 +6,9 @@ permissions:
 
 on:
   workflow_dispatch:
-  schedule: 
+  schedule:
     # 08:00 Asia/Shanghai = 00:00 UTC
     - cron: "0 0 1 1,4,7,10 *"
-#on:
- # workflow_dispatch:
- # schedule:
-    # 03:00 Asia/Shanghai = 19:00 UTC (previous day)
-   # - cron: "0 19 * * *"
 
 jobs:
   sync-and-dispatch:
@@ -26,37 +21,36 @@ jobs:
             exit 1
           fi
 
-      - name: Sync fork branch with upstream (openwrt-25.12)
-        env:
-          GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
-        run: |
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/xiangtailiang/openwrt/merge-upstream \
-            -f branch='openwrt-25.12'
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
-      - name: Trigger firmware build workflow (openwrt-25.12)
+      - name: Check upstream main branch for new commits
+        id: check_main
         env:
           GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
         run: |
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/xiangtailiang/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
-            -f ref='main'
-
-      - name: Sync fork branch with upstream (main)
-        env:
-          GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
-        run: |
-          gh api \
-            --method POST \
-            -H "Accept: application/vnd.github+json" \
-            /repos/xiangtailiang/openwrt/merge-upstream \
-            -f branch='main'
+          # 读取上次记录的 SHA
+          LAST_MAIN=""
+          if [ -f .upstream-main.sha ]; then
+            LAST_MAIN=$(cat .upstream-main.sha)
+          fi
+          # 获取上游仓库最新 commit SHA
+          LATEST_SHA=$(gh api repos/xiangtailiang/openwrt/commits/main --jq '.sha')
+          echo "Last recorded SHA: ${LAST_MAIN}"
+          echo "Latest upstream SHA: ${LATEST_SHA}"
+          if [ "$LAST_MAIN" = "$LATEST_SHA" ]; then
+            echo "✅ No new commits on main branch"
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "🔄 New commit detected: ${LATEST_SHA}"
+            echo "$LATEST_SHA" > .upstream-main.sha
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Trigger firmware build workflow (main)
+        if: steps.check_main.outputs.has_update == 'true'
         env:
           GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
         run: |
@@ -66,7 +60,59 @@ jobs:
             /repos/xiangtailiang/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-main.yml/dispatches \
             -f ref='main'
 
+      - name: Check upstream openwrt-25.12 branch for new commits
+        id: check_25_12
+        env:
+          GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
+        run: |
+          LAST_25_12=""
+          if [ -f .upstream-25.12.sha ]; then
+            LAST_25_12=$(cat .upstream-25.12.sha)
+          fi
+          LATEST_SHA=$(gh api repos/xiangtailiang/openwrt/commits/openwrt-25.12 --jq '.sha')
+          echo "Last recorded SHA: ${LAST_25_12}"
+          echo "Latest upstream SHA: ${LATEST_SHA}"
+          if [ "$LAST_25_12" = "$LATEST_SHA" ]; then
+            echo "✅ No new commits on openwrt-25.12 branch"
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "🔄 New commit detected: ${LATEST_SHA}"
+            echo "$LATEST_SHA" > .upstream-25.12.sha
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Trigger firmware build workflow (openwrt-25.12)
+        if: steps.check_25_12.outputs.has_update == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.OPENWRT_SYNC_TOKEN }}
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/xiangtailiang/OpenWrt-for-XG-040G-MD/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
+            -f ref='main'
+
+      - name: Commit updated SHA tracking files
+        run: |
+          git config user.name "nightly-sync-bot"
+          git config user.email "bot@localhost"
+          git add .upstream-main.sha .upstream-25.12.sha 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update upstream commit tracking [skip ci]"
+            git push
+          fi
+
       - name: Summary
         run: |
-          echo "✅ Synced xiangtailiang/openwrt:openwrt-25.12 and triggered xg-040g-md-openwrt-25.12.yml"
-          echo "✅ Synced xiangtailiang/openwrt:main and triggered xg-040g-md-openwrt-main.yml"
+          echo "=== Nightly Sync Summary ==="
+          echo "main branch update: ${{ steps.check_main.outputs.has_update }}"
+          echo "openwrt-25.12 branch update: ${{ steps.check_25_12.outputs.has_update }}"
+          if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
+                      echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
+          fi
+          if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
+            echo "✅ Dispatched xg-040g-md-openwrt-25.12.yml"
+          fi
+          if [ "${{ steps.check_main.outputs.has_update }}" = "false" ] && [ "${{ steps.check_25_12.outputs.has_update }}" = "false" ]; then
+            echo "⏭️ No updates detected, nothing to build"
+          fi
