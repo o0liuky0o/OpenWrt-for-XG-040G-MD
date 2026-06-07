@@ -97,7 +97,7 @@ jobs:
           df -h
 
       - name: Restore dl cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: /mnt/openwrt/dl
           key: ${{ runner.os }}-openwrt-${{ env.REPO_BRANCH }}-dl-${{ hashFiles('feeds.conf.default') }}
@@ -105,7 +105,7 @@ jobs:
             ${{ runner.os }}-openwrt-${{ env.REPO_BRANCH }}-dl-
 
       - name: Restore ccache
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v5
         with:
           path: /mnt/openwrt/ccache
           key: ${{ runner.os }}-openwrt-${{ env.REPO_BRANCH }}-ccache-v2-${{ github.run_id }}
@@ -184,7 +184,7 @@ jobs:
           ccache -s || true
 
       - name: Save ccache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         if: always()
         with:
           path: /mnt/openwrt/ccache
