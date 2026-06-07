@@ -108,7 +108,7 @@ jobs:
           echo "main branch update: ${{ steps.check_main.outputs.has_update }}"
           echo "openwrt-25.12 branch update: ${{ steps.check_25_12.outputs.has_update }}"
           if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
-                      echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
+            echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
           fi
           if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
             echo "✅ Dispatched xg-040g-md-openwrt-25.12.yml"
