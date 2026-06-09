@@ -12,7 +12,6 @@ OpenWrt firmware for **NOKIA BELL XG-040G-MD (Airoha AN7581, aarch64)**
 ### 科学上网
 - [HomeProxy](https://github.com/immortalwrt/homeproxy)
 - [OpenClash](https://github.com/vernesong/OpenClash)
-- xray-core
 
 ### 基础网络
 - 防火墙 (nftables + firewall4)
