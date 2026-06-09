@@ -33,7 +33,7 @@ OpenWrt firmware for **NOKIA BELL XG-040G-MD (Airoha AN7581, aarch64)**
 | 分类 | 包含 |
 |:----|:----|
 | 🌐 科学上网 | **HomeProxy**（唯一代理，轻量 Rust 核心）|
-| 📡 网络 | UPnP(miniupnpd), WOL, IGMP(IPTV), DDNS-GO |
+| 📡 网络 | 防火墙 (nftables), dnsmasq, UPnP(miniupnpd), WOL, IGMP(IPTV), DDNS-GO |
 | 📁 文件 | **QuickFile**（内嵌 Luci，插 U 盘即用，中文界面）|
 | 🖥 系统 | 定时任务, 系统日志, 网页终端(QuickFile内置) |
 | 🔧 工具 | tcpdump, cron, curl |
