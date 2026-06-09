@@ -1,20 +1,50 @@
 # OpenWrt for XG-040G-MD
 
-OpenWrt firmware for NOKIA BELL XG-040G-MD
+OpenWrt firmware for **NOKIA BELL XG-040G-MD (Airoha AN7581, aarch64)**
 
-源仓库采用：[https://github.com/xiangtailiang/openwrt](https://github.com/xiangtailiang/openwrt)
-
-- 已完美适配 SkyHigh 闪存，运行稳定（采用官方 Robust Read Workaround 补丁）
-- Image 基于 OpenWrt 25.12 稳定版或 main (snapshot) 分支构建
-- 包含 luci，尽可能保持小体积，不包含其他不必要的包
+- 源仓库：[https://github.com/xiangtailiang/openwrt](https://github.com/xiangtailiang/openwrt)
+- 架构：**aarch64** | 包管理器：**APK** | 内核：**Linux 6.12**
+- 已适配 SkyHigh 闪存，运行稳定（采用官方 Robust Read Workaround 补丁）
+- Image 基于 OpenWrt 25.12 / main (snapshot) 分支构建
 
 ## 包含的插件 (LuCI Apps)
 
-固件主打核心路由及科学上网功能，精简无杂项：
-- **基础界面**: LuCI (支持 HTTPS), 中文语言包
-- **默认主题**: Argon 主题 (含设置页), 保留原生 Bootstrap
-- **网络与安全**: 防火墙 (基于 nftables), dnsmasq (DHCP/DNS/IPv6)
-- **科学上网**: HomeProxy, PassWall ，openclash
+### 科学上网
+- [HomeProxy](https://github.com/immortalwrt/homeproxy)
+- [OpenClash](https://github.com/vernesong/OpenClash)
+- xray-core
+
+### 基础网络
+- 防火墙 (nftables + firewall4)
+- dnsmasq-full (DHCP/DNS/IPv6)
+- 多线负载均衡 (mwan3)
+- UPnP (通用即插即用)
+- WOL (网络唤醒)
+- IGMP 组播代理 (IPTV 必备)
+
+### 文件与存储
+- FileBrowser（文件浏览器）
+- TTYD（网页终端）
+- filetransfer（文件上传下载）
+- exFAT / FAT32 / ext4 文件系统支持
+- USB 存储支持 (USB 2.0/3.0)
+
+### 系统管理
+- LuCI (支持 HTTPS)
+- Argon 主题 + 配置页
+- 中文语言包
+- CPU / 温度监控 (cpustat)
+- 系统日志
+- Netmon（网络诊断）
+- 带宽监控 (nlbwmon)
+- 定时任务 (cron)
+- IPTV 管理
+
+### 其他工具
+- DDNS-GO（动态域名解析）
+- curl / wget-ssl
+- tcpdump（网络抓包）
+- ethtool（网卡诊断）
 
 ## 刷机教程
 
@@ -24,8 +54,7 @@ OpenWrt firmware for NOKIA BELL XG-040G-MD
 > [!WARNING]
 > **进入 U-Boot 的正确方法：**
 > 给路由器通电等 **3秒钟** 后，再按住 reset 键不放。
-> **千万不要**按住 reset 键再通电，否则机器会进入底层的“救砖模式”（MaskROM/Emergency 模式），将无法进入 U-Boot Web 界面。
-
+> **千万不要**按住 reset 键再通电，否则机器会进入底层的"救砖模式"（MaskROM/Emergency 模式），将无法进入 U-Boot Web 界面。
 
 ## Docs
 
