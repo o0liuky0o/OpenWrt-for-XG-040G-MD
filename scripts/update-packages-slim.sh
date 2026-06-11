@@ -40,6 +40,7 @@ UPDATE_PACKAGE() {
 	elif [[ "$PKG_SPECIAL" == "name" ]]; then
 		mv -f $REPO_NAME $PKG_NAME
 	fi
+
 	echo "Done: $PKG_NAME"
 }
 
@@ -65,12 +66,6 @@ fi
 
 # QuickFile
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
-
-# DDNS-GO
-UPDATE_PACKAGE "luci-app-ddns-go" "sbwml/luci-app-ddns-go" "main" "name"
-
-# 定时任务
-UPDATE_PACKAGE "luci-app-crontab" "sbwml/luci-app-crontab" "main" "name"
 
 echo " "
 echo "=========================================="
