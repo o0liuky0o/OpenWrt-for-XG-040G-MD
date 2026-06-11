@@ -113,6 +113,12 @@ PATCH_PASSWALL_GLOBAL_LUA
 # QuickFile (轻量文件管理器，内嵌 LuCI)
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
 
+# DDNS-GO (动态域名解析 LuCI 界面)
+UPDATE_PACKAGE "luci-app-ddns-go" "sbwml/luci-app-ddns-go" "main" "name"
+
+# Crond 定时任务 (LuCI 界面)
+UPDATE_PACKAGE "luci-app-crontab" "sbwml/luci-app-crontab" "main" "name"
+
 # OpenWrt 25.12 下 shadowsocksr-libev 的上游归档内容已变化，旧 MIRROR_HASH 失效。
 # 先禁用 SSR 组件，避免 passwall 选择该包导致下载阶段直接失败。
 PASSWALL_MAKEFILE="./luci-app-passwall/Makefile"
