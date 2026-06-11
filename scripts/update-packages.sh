@@ -110,6 +110,9 @@ fi
 UPDATE_PACKAGE "passwall" "Openwrt-Passwall/openwrt-passwall" "main" "pkg"
 PATCH_PASSWALL_GLOBAL_LUA
 
+# QuickFile (轻量文件管理器，内嵌 LuCI)
+UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
+
 # OpenWrt 25.12 下 shadowsocksr-libev 的上游归档内容已变化，旧 MIRROR_HASH 失效。
 # 先禁用 SSR 组件，避免 passwall 选择该包导致下载阶段直接失败。
 PASSWALL_MAKEFILE="./luci-app-passwall/Makefile"
