@@ -67,6 +67,9 @@ fi
 # QuickFile（轻量文件管理器）
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
 
+# DDNS-GO（动态域名解析）
+UPDATE_PACKAGE "luci-app-ddns-go" "sirpdboy/luci-app-ddns-go" "main"
+
 # OpenClash（代理软件）
 UPDATE_PACKAGE "luci-app-openclash" "vernesong/OpenClash" "dev"
 
