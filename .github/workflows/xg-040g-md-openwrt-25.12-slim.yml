@@ -165,21 +165,12 @@ jobs:
           cd openwrt
           echo "Disk usage before compile:"
           df -h
-          if [[ "${{ inputs.log_switch }}" == "true" ]]; then
-            make -j1 V=s || {
-              echo "Compile failed, disk usage diagnostics:"
-              df -h
-              du -h -d1 . | sort -h | tail -n 30
-              exit 1
-            }
-          else
-            make -j$(nproc) || {
-              echo "Compile failed, disk usage diagnostics:"
-              df -h
-              du -h -d1 . | sort -h | tail -n 30
-              exit 1
-            }
-          fi
+          make -j$(nproc) V=s 2>&1 || {
+            echo "Compile failed, disk usage diagnostics:"
+            df -h
+            du -h -d1 . | sort -h | tail -n 30
+            exit 1
+          }
           DEVICE_NAME=$(grep -o 'CONFIG_TARGET.*DEVICE_[^=]*=y' .config | head -1 | sed 's/.*DEVICE_\(.*\)=y/\1/')
           if [[ -n "$DEVICE_NAME" ]]; then
             echo "DEVICE_NAME=_${DEVICE_NAME}" >> "$GITHUB_ENV"
