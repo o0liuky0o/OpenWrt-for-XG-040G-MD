@@ -46,11 +46,7 @@ UPDATE_PACKAGE() {
 
 echo "Starting package updates..."
 
-# 删除 feeds 中的 sing-box 避免与第三方包冲突
-rm -rf ../feeds/packages/net/sing-box
-rm -rf ../package/feeds/packages/sing-box
-
-# HomeProxy（代理软件）
+# HomeProxy（代理软件，基于 sing-box）
 UPDATE_PACKAGE "homeproxy" "immortalwrt/homeproxy" "master"
 
 # Argon 主题
