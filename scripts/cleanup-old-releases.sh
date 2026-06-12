@@ -7,11 +7,14 @@ set -euo pipefail
 
 keep_releases="${KEEP_RELEASES:-20}"
 keep_marker="${KEEP_RELEASE_MARKER:-[keep-release]}"
+release_prefix="${RELEASE_PREFIX:-}"
 
 if ! [[ "$keep_releases" =~ ^[0-9]+$ ]] || (( keep_releases < 1 )); then
   echo "KEEP_RELEASES must be a positive integer, got: ${keep_releases}"
   exit 1
 fi
+
+echo "Cleanup config: prefix=${release_prefix} keep=${keep_releases} marker=${keep_marker}"
 
 release_json="$(
   gh release list \
@@ -22,12 +25,31 @@ release_json="$(
     --json tagName,name,isLatest,publishedAt
 )"
 
+# 过滤出匹配前缀的 Release
+if [ -n "$release_prefix" ]; then
+  filtered_json=$(printf '%s\n' "$release_json" | jq -r --arg prefix "$release_prefix" '
+    [.[] | select(.tagName | startswith($prefix))]
+  ')
+  echo "Filtering releases with prefix: ${release_prefix}"
+else
+  filtered_json="$release_json"
+  echo "No prefix filter, processing all releases"
+fi
+
+release_count=$(printf '%s\n' "$filtered_json" | jq 'length')
+echo "Found ${release_count} releases matching prefix."
+
+if (( release_count == 0 )); then
+  echo "No releases to clean up."
+  exit 0
+fi
+
 mapfile -t release_tags < <(
-  printf '%s\n' "$release_json" | jq -r 'sort_by(.publishedAt) | reverse | .[] | .tagName'
+  printf '%s\n' "$filtered_json" | jq -r 'sort_by(.publishedAt) | reverse | .[] | .tagName'
 )
 
 mapfile -t preserved_tags < <(
-  printf '%s\n' "$release_json" | jq -r \
+  printf '%s\n' "$filtered_json" | jq -r \
     --argjson keep "$keep_releases" \
     --arg marker "$keep_marker" \
     '
@@ -44,9 +66,7 @@ for tag in "${preserved_tags[@]}"; do
   preserved_map["$tag"]=1
 done
 
-release_count="${#release_tags[@]}"
-echo "Found ${release_count} published releases in ${GITHUB_REPOSITORY}."
-echo "Keeping the newest ${keep_releases} releases, the latest release, and releases marked with ${keep_marker}."
+echo "Keeping the newest ${keep_releases} releases for prefix \"${release_prefix}\", plus latest and marked."
 
 if (( release_count <= keep_releases )); then
   echo "No cleanup needed. Keeping all ${release_count} releases."

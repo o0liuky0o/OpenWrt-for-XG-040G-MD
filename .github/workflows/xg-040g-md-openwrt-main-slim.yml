@@ -30,6 +30,7 @@ env:
   UPLOAD_RELEASE: true
   KEEP_RELEASES: 4
   KEEP_RELEASE_MARKER: "[keep-release]"
+  RELEASE_PREFIX: "main-slim"
   CCACHE_DIR: /mnt/openwrt/ccache
   CCACHE_MAXSIZE: 5G
   TZ: Asia/Shanghai
@@ -200,9 +201,9 @@ jobs:
         id: tag
         if: env.UPLOAD_RELEASE == 'true'
         run: |
-          echo "release_tag=$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+          echo "release_tag=main-slim-$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
           cat <<EOF > release.txt
-          🚀 OpenWrt firmware for XG-040G-MD (openwrt-main)
+          🚀 OpenWrt firmware for XG-040G-MD (main-slim)
           ----------------------
           设备型号: XG-040G-MD
           构建时间: $(date +"%Y-%m-%d %H:%M")
@@ -236,4 +237,5 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           KEEP_RELEASES: ${{ env.KEEP_RELEASES }}
           KEEP_RELEASE_MARKER: ${{ env.KEEP_RELEASE_MARKER }}
+          RELEASE_PREFIX: ${{ env.RELEASE_PREFIX }}
         run: bash scripts/cleanup-old-releases.sh
