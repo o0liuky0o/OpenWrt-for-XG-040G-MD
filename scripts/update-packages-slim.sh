@@ -46,13 +46,6 @@ UPDATE_PACKAGE() {
 
 echo "Starting package updates..."
 
-# 删除 feeds 中的 sing-box，避免与 HomeProxy 冲突
-rm -rf ../feeds/packages/net/sing-box
-rm -rf ../package/feeds/packages/sing-box
-
-# HomeProxy（代理软件）
-UPDATE_PACKAGE "homeproxy" "immortalwrt/homeproxy" "master"
-
 # Argon 主题
 UPDATE_PACKAGE "luci-theme-argon" "jerrykuku/luci-theme-argon" "master"
 UPDATE_PACKAGE "luci-app-argon-config" "jerrykuku/luci-app-argon-config" "master"
@@ -64,8 +57,14 @@ if [ -n "$COLLECTION_MAKEFILES" ]; then
 	echo "Done setting default LuCI theme to argon"
 fi
 
-# QuickFile
+# DDNS-GO
+UPDATE_PACKAGE "ddns-go" "jefferymomo/luci-app-ddns-go" "main" "name"
+
+# QuickFile（轻量文件管理器）
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
+
+# OpenClash（代理软件，代替 HomeProxy）
+UPDATE_PACKAGE "luci-app-openclash" "vernesong/OpenClash" "dev"
 
 echo " "
 echo "=========================================="
