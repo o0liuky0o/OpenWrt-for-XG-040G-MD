@@ -28,7 +28,7 @@ env:
   FEEDS_CONF: feeds.conf.default
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
-  KEEP_RELEASES: 4
+  KEEP_RELEASES: 3
   KEEP_RELEASE_MARKER: "[keep-release]"
   RELEASE_PREFIX: "main-slim"
   CCACHE_DIR: /mnt/openwrt/ccache
