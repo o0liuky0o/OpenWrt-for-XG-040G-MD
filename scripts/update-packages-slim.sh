@@ -58,7 +58,7 @@ if [ -n "$COLLECTION_MAKEFILES" ]; then
 fi
 
 # DDNS-GO
-UPDATE_PACKAGE "ddns-go" "jefferymomo/luci-app-ddns-go" "main" "name"
+UPDATE_PACKAGE "luci-app-ddns-go" "sirpdboy/luci-app-ddns-go" "main"
 
 # QuickFile（轻量文件管理器）
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"

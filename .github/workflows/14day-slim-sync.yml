@@ -30,11 +30,8 @@ jobs:
           echo "Last recorded SHA: ${LAST_MAIN}"
           echo "Latest upstream SHA: ${LATEST_SHA}"
           if [ "$LAST_MAIN" = "$LATEST_SHA" ]; then
-            echo "✅ No new commits on main branch"
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           else
-            echo "🔄 New commit detected: ${LATEST_SHA}"
-            echo "$LATEST_SHA" > .upstream-main.sha
             echo "has_update=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -59,11 +56,8 @@ jobs:
           echo "Last recorded SHA: ${LAST_25_12}"
           echo "Latest upstream SHA: ${LATEST_SHA}"
           if [ "$LAST_25_12" = "$LATEST_SHA" ]; then
-            echo "✅ No new commits on openwrt-25.12 branch"
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           else
-            echo "🔄 New commit detected: ${LATEST_SHA}"
-            echo "$LATEST_SHA" > .upstream-25.12.sha
             echo "has_update=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -79,6 +73,14 @@ jobs:
 
       - name: Commit updated SHA tracking files
         run: |
+          if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
+            SHA=$(gh api repos/xiangtailiang/openwrt/commits/main --jq '.sha')
+            echo "$SHA" > .upstream-main.sha
+          fi
+          if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
+            SHA=$(gh api repos/xiangtailiang/openwrt/commits/openwrt-25.12 --jq '.sha')
+            echo "$SHA" > .upstream-25.12.sha
+          fi
           git config user.name "14day-slim-sync-bot"
           git config user.email "bot@localhost"
           git add .upstream-main.sha .upstream-25.12.sha 2>/dev/null || true
