@@ -1,4 +1,4 @@
-name: Weekly Slim Sync and Build
+name: 14-Day Slim Sync and Build
 
 permissions:
   contents: write
@@ -7,8 +7,8 @@ permissions:
 on:
   workflow_dispatch:
   schedule:
-    # Every Monday 00:00 UTC = 08:00 Beijing
-    - cron: "0 0 * * 1"
+    # 每14天 08:00 Asia/Shanghai = 00:00 UTC
+    - cron: "0 0 */14 * *"
 
 jobs:
   slim-sync-and-build:
@@ -34,6 +34,7 @@ jobs:
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           else
             echo "🔄 New commit detected: ${LATEST_SHA}"
+            echo "$LATEST_SHA" > .upstream-main.sha
             echo "has_update=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -62,6 +63,7 @@ jobs:
             echo "has_update=false" >> "$GITHUB_OUTPUT"
           else
             echo "🔄 New commit detected: ${LATEST_SHA}"
+            echo "$LATEST_SHA" > .upstream-25.12.sha
             echo "has_update=true" >> "$GITHUB_OUTPUT"
           fi
 
@@ -75,11 +77,27 @@ jobs:
             -f ref='main'
           echo "✅ Dispatched xg-040g-md-openwrt-25.12-slim.yml"
 
+      - name: Commit updated SHA tracking files
+        run: |
+          git config user.name "14day-slim-sync-bot"
+          git config user.email "bot@localhost"
+          git add .upstream-main.sha .upstream-25.12.sha 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update upstream commit tracking [skip ci]"
+            git push
+          fi
+
       - name: Summary
         run: |
-          echo "=== Weekly Slim Sync Summary ==="
+          echo "=== 14-Day Slim Sync Summary ==="
           echo "main branch update: ${{ steps.check_main.outputs.has_update }}"
           echo "openwrt-25.12 branch update: ${{ steps.check_25_12.outputs.has_update }}"
+          if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
+            echo "✅ Dispatched xg-040g-md-openwrt-main-slim.yml"
+          fi
+          if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
+            echo "✅ Dispatched xg-040g-md-openwrt-25.12-slim.yml"
+          fi
           if [ "${{ steps.check_main.outputs.has_update }}" = "false" ] && [ "${{ steps.check_25_12.outputs.has_update }}" = "false" ]; then
-            echo "⏭️ No upstream updates this week, nothing to build"
+            echo "⏭️ No upstream updates this 14-day cycle, nothing to build"
           fi
