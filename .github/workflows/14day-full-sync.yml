@@ -1,0 +1,105 @@
+name: 14-Day Full Sync and Build
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每14天 08:00 Asia/Shanghai = 00:00 UTC
+    - cron: "0 0 */14 * *"
+
+jobs:
+  full-sync-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Check upstream main branch for new commits
+        id: check_main
+        run: |
+          LAST_MAIN=""
+          if [ -f .upstream-main.sha ]; then
+            LAST_MAIN=$(cat .upstream-main.sha)
+          fi
+          LATEST_SHA=$(gh api repos/xiangtailiang/openwrt/commits/main --jq '.sha')
+          echo "Last recorded SHA: ${LAST_MAIN}"
+          echo "Latest upstream SHA: ${LATEST_SHA}"
+          if [ "$LAST_MAIN" = "$LATEST_SHA" ]; then
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch Full Main build
+        if: steps.check_main.outputs.has_update == 'true'
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/actions/workflows/xg-040g-md-openwrt-main.yml/dispatches \
+            -f ref='main'
+          echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
+
+      - name: Check upstream openwrt-25.12 branch for new commits
+        id: check_25_12
+        run: |
+          LAST_25_12=""
+          if [ -f .upstream-25.12.sha ]; then
+            LAST_25_12=$(cat .upstream-25.12.sha)
+          fi
+          LATEST_SHA=$(gh api repos/xiangtailiang/openwrt/commits/openwrt-25.12 --jq '.sha')
+          echo "Last recorded SHA: ${LAST_25_12}"
+          echo "Latest upstream SHA: ${LATEST_SHA}"
+          if [ "$LAST_25_12" = "$LATEST_SHA" ]; then
+            echo "has_update=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_update=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Dispatch Full 25.12 build
+        if: steps.check_25_12.outputs.has_update == 'true'
+        run: |
+          gh api \
+            --method POST \
+            -H "Accept: application/vnd.github+json" \
+            /repos/${{ github.repository }}/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
+            -f ref='main'
+          echo "✅ Dispatched xg-040g-md-openwrt-25.12.yml"
+
+      - name: Commit updated SHA tracking files
+        run: |
+          if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
+            SHA=$(gh api repos/xiangtailiang/openwrt/commits/main --jq '.sha')
+            echo "$SHA" > .upstream-main.sha
+          fi
+          if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
+            SHA=$(gh api repos/xiangtailiang/openwrt/commits/openwrt-25.12 --jq '.sha')
+            echo "$SHA" > .upstream-25.12.sha
+          fi
+          git config user.name "14day-full-sync-bot"
+          git config user.email "bot@localhost"
+          git add .upstream-main.sha .upstream-25.12.sha 2>/dev/null || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update upstream commit tracking [skip ci]"
+            git push
+          fi
+
+      - name: Summary
+        run: |
+          echo "=== 14-Day Full Sync Summary ==="
+          echo "main branch update: ${{ steps.check_main.outputs.has_update }}"
+          echo "openwrt-25.12 branch update: ${{ steps.check_25_12.outputs.has_update }}"
+          if [ "${{ steps.check_main.outputs.has_update }}" = "true" ]; then
+            echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
+          fi
+          if [ "${{ steps.check_25_12.outputs.has_update }}" = "true" ]; then
+            echo "✅ Dispatched xg-040g-md-openwrt-25.12.yml"
+          fi
+          if [ "${{ steps.check_main.outputs.has_update }}" = "false" ] && [ "${{ steps.check_25_12.outputs.has_update }}" = "false" ]; then
+            echo "⏭️ No upstream updates this 14-day cycle, nothing to build"
+          fi

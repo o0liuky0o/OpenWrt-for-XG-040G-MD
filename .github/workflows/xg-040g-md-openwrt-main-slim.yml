@@ -1,5 +1,9 @@
 name: Build_XG_040G_MD_OpenWrt_Main_Slim
 
+concurrency:
+  group: openwrt-main-slim-${{ github.sha }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   actions: write

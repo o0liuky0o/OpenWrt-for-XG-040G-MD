@@ -9,6 +9,12 @@ keep_releases="${KEEP_RELEASES:-20}"
 keep_marker="${KEEP_RELEASE_MARKER:-[keep-release]}"
 release_prefix="${RELEASE_PREFIX:-}"
 
+# 🔒 安全保护：RELEASE_PREFIX 必须设置，防止误删其他前缀的 Release
+if [ -z "$release_prefix" ]; then
+  echo "❌ RELEASE_PREFIX is not set. Aborting to prevent cross-workflow deletion."
+  exit 1
+fi
+
 if ! [[ "$keep_releases" =~ ^[0-9]+$ ]] || (( keep_releases < 1 )); then
   echo "KEEP_RELEASES must be a positive integer, got: ${keep_releases}"
   exit 1

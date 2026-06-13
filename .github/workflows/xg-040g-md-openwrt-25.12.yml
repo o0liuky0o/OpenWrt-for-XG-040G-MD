@@ -1,5 +1,9 @@
 name: Build_XG_040G_MD_OpenWrt_25_12
 
+concurrency:
+  group: openwrt-25.12-${{ github.sha }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   actions: write
