@@ -266,7 +266,7 @@ jobs:
             分支: main
             类型: Full
             设备: XG-040G-MD
-            构建时间: $(date +'%Y-%m-%d %H:%M')
+            构建时间: ${{ github.run_started_at }}
             运行链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             
             ${{ job.status == 'success' && '📦 固件已发布到 GitHub Releases' || '🔧 请查看日志排查问题' }}
