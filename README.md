@@ -1,5 +1,7 @@
 # OpenWrt for XG-040G-MD
 
+> ⚠️ **个人配置，仅供参考** — 本仓库的配置是根据个人需求定制的，**不一定适用于所有人**。如需使用，请根据自身环境和需求自行调整 `.config` 文件。
+
 OpenWrt firmware for **NOKIA BELL XG-040G-MD (Airoha AN7581, aarch64)**
 
 - 源仓库：[https://github.com/xiangtailiang/openwrt](https://github.com/xiangtailiang/openwrt)

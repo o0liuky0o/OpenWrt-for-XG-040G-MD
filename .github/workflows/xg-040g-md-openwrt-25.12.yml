@@ -244,3 +244,31 @@ jobs:
           KEEP_RELEASE_MARKER: ${{ env.KEEP_RELEASE_MARKER }}
           RELEASE_PREFIX: ${{ env.RELEASE_PREFIX }}
         run: bash scripts/cleanup-old-releases.sh
+
+  notify:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.qq.com
+          server_port: 465
+          username: ${{ secrets.SMTP_USERNAME }}
+          password: ${{ secrets.SMTP_PASSWORD }}
+          subject: |
+            [${{ job.status == 'success' && '✅' || '❌' }}] OpenWrt 固件编译通知 - 25.12 Full
+          to: ${{ secrets.NOTIFICATION_EMAIL }}
+          from: OpenWrt Build Bot <${{ secrets.SMTP_USERNAME }}>
+          body: |
+            工作流: ${{ github.workflow }}
+            状态: ${{ job.status == 'success' && '✅ 编译成功' || '❌ 编译失败' }}
+            分支: openwrt-25.12
+            类型: Full
+            设备: XG-040G-MD
+            构建时间: $(date +'%Y-%m-%d %H:%M')
+            运行链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            ${{ job.status == 'success' && '📦 固件已发布到 GitHub Releases' || '🔧 请查看日志排查问题' }}
+          secure: true
