@@ -1,5 +1,9 @@
 name: Build_XG_040G_MD_OpenWrt_Main
 
+concurrency:
+  group: openwrt-release-${{ github.sha }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
   actions: write
