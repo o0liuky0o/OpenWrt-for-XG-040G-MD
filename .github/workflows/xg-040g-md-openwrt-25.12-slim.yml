@@ -271,7 +271,7 @@ jobs:
             分支: openwrt-25.12
             类型: Slim
             设备: XG-040G-MD
-            构建时间: ${{ github.run_started_at }}
+            构建时间: $(TZ=Asia/Shanghai date +"%Y-%m-%d %H:%M")
             运行链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             
             ${{ job.status == 'success' && '📦 固件已发布到 GitHub Releases' || '🔧 请查看日志排查问题' }}
