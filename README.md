@@ -48,6 +48,16 @@
 - 网络诊断 `netmon`（含中文）
 - 访问控制、系统日志、定时任务
 
+**🔐 HTTPS 证书**
+- **ACME** — Let's Encrypt 证书自动申请（LuCI 界面中文）
+- ⚠️ 官方源版本较旧（2.8.5），建议刷机后手动升级 acme.sh 到最新版：
+  ```bash
+  wget https://github.com/acmesh-official/acme.sh/archive/master.tar.gz
+  tar xzf master.tar.gz && cd acme.sh-master
+  ./acme.sh --install --home /usr/lib/acme --cert-home /etc/acme/certs --config-home /etc/acme/config
+  chmod 755 /usr/lib/acme/acme.sh
+  ```
+
 ---
 
 ### 🅱️ Slim 版 — 轻量精简便携
