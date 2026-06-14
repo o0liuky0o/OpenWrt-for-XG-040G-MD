@@ -65,6 +65,16 @@
 **系统工具**
 - 定时任务 `cron`、系统日志、网页终端（QuickFile 内置）
 
+**🔐 HTTPS 证书**
+- **ACME** — Let's Encrypt 证书自动申请（LuCI 界面中文）
+- ⚠️ 官方源版本较旧（2.8.5），建议刷机后手动升级 acme.sh 到最新版：
+  ```bash
+  wget https://github.com/acmesh-official/acme.sh/archive/master.tar.gz
+  tar xzf master.tar.gz && cd acme.sh-master
+  ./acme.sh --install --home /usr/lib/acme --cert-home /etc/acme/certs --config-home /etc/acme/config
+  chmod 755 /usr/lib/acme/acme.sh
+  ```
+
 **已精简掉的插件**
 | 移除项 | 原因 |
 |--------|------|
