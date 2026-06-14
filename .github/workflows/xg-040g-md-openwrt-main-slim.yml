@@ -20,7 +20,6 @@ on:
     branches:
       - main
     paths:
-      - ".github/workflows/xg-040g-md-openwrt-main-slim.yml"
       - "config/**"
       - "scripts/**"
       - "feeds.conf.default"
@@ -249,6 +248,8 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     steps:
+      - name: Set build time
+        run: echo "BUILD_TIME=$(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M')" >> $GITHUB_ENV
       - name: Send email notification
         uses: dawidd6/action-send-mail@v3
         with:
@@ -266,7 +267,7 @@ jobs:
             分支: main
             类型: Slim
             设备: XG-040G-MD
-            构建时间: $(TZ=Asia/Shanghai date +"%Y-%m-%d %H:%M")
+            构建时间: ${{ env.BUILD_TIME }}
             运行链接: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             
             ${{ job.status == 'success' && '📦 固件已发布到 GitHub Releases' || '🔧 请查看日志排查问题' }}
