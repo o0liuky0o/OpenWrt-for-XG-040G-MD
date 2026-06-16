@@ -63,8 +63,8 @@ UPDATE_PACKAGE "luci-app-ddns-go" "sirpdboy/luci-app-ddns-go" "main"
 # QuickFile（轻量文件管理器）
 UPDATE_PACKAGE "quickfile" "sbwml/luci-app-quickfile" "main" "name"
 
-# OpenClash（代理软件，代替 HomeProxy）
-UPDATE_PACKAGE "luci-app-openclash" "vernesong/OpenClash" "dev"
+# HomeProxy（代理软件，基于 sing-box，轻量省资源）
+UPDATE_PACKAGE "homeproxy" "immortalwrt/homeproxy" "master"
 
 # QuickFile 开机自启 + nginx 配置（基于 sbwml 官方 README）
 UCI_DEFAULTS_DIR="../package/base-files/files/etc/uci-defaults"
