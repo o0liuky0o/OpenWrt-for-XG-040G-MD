@@ -21,8 +21,10 @@ on:
       - main
     paths:
       - ".github/workflows/xg-040g-md-openwrt-25.12.yml"
-      - "config/**"
-      - "scripts/**"
+      - "config/xg-040g-md.config"
+      - "config/xg-040g-md-old.config"
+      - "scripts/update-packages-full.sh"
+      - "feeds.conf.default"
       - "feeds.conf.default"
 
 env:

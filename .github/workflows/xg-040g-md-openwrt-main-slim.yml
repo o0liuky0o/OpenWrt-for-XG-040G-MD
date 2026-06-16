@@ -20,8 +20,10 @@ on:
     branches:
       - main
     paths:
-      - "config/**"
-      - "scripts/**"
+      - ".github/workflows/xg-040g-md-openwrt-main-slim.yml"
+      - "config/xg-040g-md-slim.config"
+      - "config/xg-040g-md-old.config"
+      - "scripts/update-packages-slim.sh"
       - "feeds.conf.default"
 
 env:

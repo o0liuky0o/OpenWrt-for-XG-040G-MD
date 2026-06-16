@@ -69,6 +69,29 @@ UPDATE_PACKAGE "luci-app-ddns-go" "sirpdboy/luci-app-ddns-go" "main"
 # OpenClash（代理软件）
 UPDATE_PACKAGE "luci-app-openclash" "vernesong/OpenClash" "dev"
 
+# QuickFile 开机自启 + nginx 配置（基于 sbwml 官方 README）
+UCI_DEFAULTS_DIR="../package/base-files/files/etc/uci-defaults"
+mkdir -p "$UCI_DEFAULTS_DIR"
+cat > "$UCI_DEFAULTS_DIR/90-quickfile-nginx" << 'EOF'
+#!/bin/sh
+uci set nginx.global.uci_enable='true'
+uci del nginx._lan 2>/dev/null || true
+uci del nginx._redirect2ssl 2>/dev/null || true
+uci add nginx server
+uci rename nginx.@server[0]='_lan'
+uci set nginx._lan.server_name='_lan'
+uci add_list nginx._lan.listen='80 default_server'
+uci add_list nginx._lan.listen='[::]:80 default_server'
+uci add_list nginx._lan.include='conf.d/*.locations'
+uci set nginx._lan.access_log='off; # logd openwrt'
+uci commit nginx
+/etc/init.d/quickfile enable
+service nginx restart 2>/dev/null || true
+exit 0
+EOF
+chmod +x "$UCI_DEFAULTS_DIR/90-quickfile-nginx"
+echo "Done: QuickFile nginx uci-defaults 已配置"
+
 echo " "
 echo "=========================================="
 echo "Package updates completed!"
