@@ -38,11 +38,11 @@ jobs:
       - name: Dispatch Full Main build
         if: steps.check_main.outputs.has_update == 'true'
         run: |
-          gh api \
-            --method POST \
+          curl -s -X POST \
             -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             /repos/${{ github.repository }}/actions/workflows/xg-040g-md-openwrt-main.yml/dispatches \
-            -f ref='main'
+            -f "ref=main"
           echo "✅ Dispatched xg-040g-md-openwrt-main.yml"
 
       - name: Check upstream openwrt-25.12 branch for new commits
@@ -64,11 +64,11 @@ jobs:
       - name: Dispatch Full 25.12 build
         if: steps.check_25_12.outputs.has_update == 'true'
         run: |
-          gh api \
-            --method POST \
+          curl -s -X POST \
             -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             /repos/${{ github.repository }}/actions/workflows/xg-040g-md-openwrt-25.12.yml/dispatches \
-            -f ref='main'
+            -f "ref=main"
           echo "✅ Dispatched xg-040g-md-openwrt-25.12.yml"
 
       - name: Commit updated SHA tracking files
